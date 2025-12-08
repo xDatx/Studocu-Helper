@@ -1,4 +1,3 @@
-// ============ HÀM CẬP NHẬT TRẠNG THÁI (CHO UI MỚI) ============
 function updateStatus(msg, isProcessing = false) {
     const statusText = document.getElementById('status-text');
     const statusBar = document.getElementById('status');
@@ -16,7 +15,6 @@ function updateStatus(msg, isProcessing = false) {
     }
 }
 
-// --- BUTTON 1: XÓA COOKIES & RELOAD ---
 document.getElementById('clearBtn').addEventListener('click', async () => {
     updateStatus("Đang quét và xóa cookie...", true);
     
@@ -45,7 +43,6 @@ document.getElementById('clearBtn').addEventListener('click', async () => {
     }
 });
 
-// --- BUTTON 2: TẠO GIAO DIỆN SẠCH & IN PDF ---
 document.getElementById('checkBtn').addEventListener('click', async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
@@ -73,7 +70,6 @@ function runCleanViewer() {
     const SCALE_FACTOR = 4;
     const HEIGHT_SCALE_DIVISOR = 4;
 
-    // ============ CÁC HÀM HỖ TRỢ ============
     function copyComputedStyle(source, target, scaleFactor, shouldScaleHeight = false, shouldScaleWidth = false, heightScaleDivisor = 4, widthScaleDivisor = 4, shouldScaleMargin = false, marginScaleDivisor = 4) {
         const computedStyle = window.getComputedStyle(source);
         
@@ -112,7 +108,6 @@ function runCleanViewer() {
             }
         }
         
-        // Xử lý Height
         const heightValue = computedStyle.getPropertyValue('height');
         if (heightValue && heightValue !== 'none' && heightValue !== 'auto') {
             if (shouldScaleHeight) {
@@ -143,8 +138,8 @@ function runCleanViewer() {
                 }
             }
         });
-        
-        // Scale Font
+
+    
         scaleProps.forEach(prop => {
             const value = computedStyle.getPropertyValue(prop);
             if (value && value !== 'none' && value !== 'auto' && value !== 'normal') {
@@ -252,7 +247,6 @@ function runCleanViewer() {
     `;
     document.head.appendChild(styleTag);
 
-    // ============ BUILD VIEWER ============
     const viewerContainer = document.createElement('div');
     viewerContainer.id = 'clean-viewer-container';
 
@@ -319,4 +313,5 @@ function runCleanViewer() {
     setTimeout(() => {
         window.print();
     }, 1000);
+
 }
