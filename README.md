@@ -32,8 +32,8 @@ Do đây là công cụ phát triển cá nhân (chưa đưa lên Store), bạn 
 2. **Mở trình quản lý tiện ích:** Truy cập đường dẫn `chrome://extensions/` trên trình duyệt (Chrome, Edge, Cốc Cốc...).
 3. **Bật Developer Mode:** Gạt công tắc **"Developer mode"** ở góc trên bên phải màn hình.
 4. **Tải tiện ích:** Nhấn nút **"Load unpacked"** và chọn thư mục chứa mã nguồn vừa giải nén.
-
-## Cách sử dụng
+dụng
+## Cách sử 
 
 1. Truy cập vào tài liệu Studocu cần xem.
 2. Nếu bị chặn watermark và mờ thì bắt buộc mở extension và chọn Bypass mờ và watermark để công đoạn tiếp theo thành công
@@ -42,13 +42,18 @@ Do đây là công cụ phát triển cá nhân (chưa đưa lên Store), bạn 
 5. Chờ vài giây để tool xử lý, sau đó hộp thoại lưu PDF sẽ tự động hiện ra.
 
 ---
-[![Xem video demo](https://img.youtube.com/vi/rt4mm-CTxqY/0.jpg)](https://www.youtube.com/watch?v=rt4mm-CTxqY)
+
+Video Testing:
+
+https://github.com/user-attachments/assets/0f98de3a-cdbb-464d-8209-b9953b0721ee
+
 ## ⚠️ Lưu ý (Disclaimer)
 Công cụ này được tạo ra với mục đích hỗ trợ học tập và nghiên cứu cá nhân. Vui lòng sử dụng có trách nhiệm và tôn trọng bản quyền của tài liệu gốc.
 
 ---
 
 *Made with ❤️ by **Dat***
+
 
 
 
