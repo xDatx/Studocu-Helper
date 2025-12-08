@@ -3,7 +3,6 @@
 Một tiện ích mở rộng (Extension) nhẹ dành cho trình duyệt, giúp tối ưu hóa trải nghiệm đọc và lưu trữ tài liệu trên Studocu.
 
 > **Trạng thái:** v1.0
-> **Tác giả:** Thành Đạt
 
 ## 📖 Giới thiệu
 
@@ -50,3 +49,4 @@ Công cụ này được tạo ra với mục đích hỗ trợ học tập và 
 ---
 
 *Made with ❤️ by **Dat***
+
