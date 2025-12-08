@@ -37,9 +37,10 @@ Do đây là công cụ phát triển cá nhân (chưa đưa lên Store), bạn 
 ## Cách sử dụng
 
 1. Truy cập vào tài liệu Studocu cần xem.
-2. Cuộn chuột xuống cuối trang để đảm bảo toàn bộ nội dung đã được tải.
-3. Mở Extension và nhấn nút **"Tạo File PDF"**.
-4. Chờ vài giây để tool xử lý, sau đó hộp thoại lưu PDF sẽ tự động hiện ra.
+2. Nếu bị chặn watermark và mờ thì bắt buộc mở extension và chọn Bypass mờ và watermark để công đoạn tiếp theo thành công
+3. Cuộn chuột xuống cuối trang để đảm bảo toàn bộ nội dung đã được tải.
+4. Mở Extension và nhấn nút **"Tạo File PDF"**.
+5. Chờ vài giây để tool xử lý, sau đó hộp thoại lưu PDF sẽ tự động hiện ra.
 
 ---
 
@@ -47,4 +48,5 @@ Do đây là công cụ phát triển cá nhân (chưa đưa lên Store), bạn 
 Công cụ này được tạo ra với mục đích hỗ trợ học tập và nghiên cứu cá nhân. Vui lòng sử dụng có trách nhiệm và tôn trọng bản quyền của tài liệu gốc.
 
 ---
+
 *Made with ❤️ by **Dat***
