@@ -52,6 +52,7 @@ Công cụ này được tạo ra với mục đích hỗ trợ học tập và 
 
 ---
 ## Stars ⭐
-<img width="2748" height="1986" alt="star-history-20251211" src="https://github.com/user-attachments/assets/394e3eb3-ce6e-44af-8cbb-4d6b18135e98" />
 
 
+
+<img width="2748" height="1986" alt="star-history-20251211 (1)" src="https://github.com/user-attachments/assets/f0fd47b7-d196-477d-a0d6-4311fdcac177" />
