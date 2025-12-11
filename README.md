@@ -33,7 +33,7 @@ Do đây là công cụ phát triển cá nhân (chưa đưa lên Store), bạn 
 3. **Bật Developer Mode:** Gạt công tắc **"Developer mode"** ở góc trên bên phải màn hình.
 4. **Tải tiện ích:** Nhấn nút **"Load unpacked"** và chọn thư mục chứa mã nguồn vừa giải nén.
 dụng
-## Cách sử 
+## Cách sử dụng
 
 1. Truy cập vào tài liệu Studocu cần xem.
 2. Nếu bị chặn watermark và mờ thì bắt buộc mở extension và chọn Bypass mờ và watermark để công đoạn tiếp theo thành công
@@ -51,10 +51,7 @@ https://github.com/user-attachments/assets/0f98de3a-cdbb-464d-8209-b9953b0721ee
 Công cụ này được tạo ra với mục đích hỗ trợ học tập và nghiên cứu cá nhân. Vui lòng sử dụng có trách nhiệm và tôn trọng bản quyền của tài liệu gốc.
 
 ---
-
+## Stars ⭐
+<img width="2748" height="1986" alt="star-history-20251211" src="https://github.com/user-attachments/assets/394e3eb3-ce6e-44af-8cbb-4d6b18135e98" />
+---
 *Made with ❤️ by **Dat***
-
-
-
-
-
