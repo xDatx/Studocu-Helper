@@ -215,3 +215,22 @@ footer:hover .author {
   42% { transform: scale(1.3); }
   70% { transform: scale(1); }
 }
+
+.guide-box {
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  color: #856404;
+  padding: 10px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  font-size: 12px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guide-box p {
+  margin: 0;
+  line-height: 1.4;
+}
