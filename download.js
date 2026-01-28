@@ -4,7 +4,6 @@ async function fetchDocument() {
     const params = signedQueryParams.global;
 
     const pageContainer = document.createElement('div');
-    pageContainer.classList.add('p2hv');
     pageContainer.id = 'page-container';
 
     await Promise.all(pageDataList.map(async pageData => {
@@ -23,17 +22,43 @@ async function fetchDocument() {
         pageContainer.innerHTML += `${pageData.pageHtmlWrapper}${pageHtml}</div>`;
     }));
 
-    const cssElement = document.createElement('link');
-    cssElement.href = `${url}${objectKey}.css${params}`;
-    cssElement.as = 'style';
-    cssElement.crossOrigin = 'anonymous';
-    cssElement.fetchPriority = 'high';
-    cssElement.rel = 'preload stylesheet';
-    cssElement.type = 'text/css';
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+body > *:not(.p2hv) { 
+    display: none !important; 
+}
 
-    const printWindow = window.open('', '');
-    printWindow.document.head.append(cssElement);
-    printWindow.document.body.append(pageContainer);
+@media print {
+    @page {
+        margin: 0;
+        size: A4;
+    }
+    body {
+        margin: 0;
+    }
+    #page-container {
+        transform: scale(2);
+        transform-origin: top left;
+    }
+    #page-container .pf {
+        margin: 0;
+        box-shadow: none;
+        page-break-after: always;
+        break-after: always;
+        border: none;
+    }
+}
+`;
+    document.head.append(styleElement);
+
+    const viewerElement = document.createElement('div');
+    viewerElement.classList.add('p2hv');
+    viewerElement.append(pageContainer);
+
+    document.body.append(viewerElement);
+    window.print();
+    styleElement.remove();
+    viewerElement.remove();
 }
 
 function createDownloadButton() {
@@ -42,7 +67,11 @@ function createDownloadButton() {
     }
 
     const topbar = document.querySelector('div[class^="TopbarActions_secondary-actions-wrapper"]');
-    const downloadButtons = topbar.firstChild.cloneNode(true);
+    const downloadButtons = topbar?.firstChild?.cloneNode(true);
+    if (!downloadButtons) {
+        return;
+    }
+
     downloadButtons.querySelectorAll('button[aria-label^="Download"]')
         .forEach(downloadButton => {
             downloadButton.classList.add('pdf-download-btn');
@@ -51,4 +80,7 @@ function createDownloadButton() {
         });
     topbar.prepend(downloadButtons);
 }
-new MutationObserver(createDownloadButton).observe(document.body, { childList: true, subtree: true });
+window.addEventListener('load', () => {
+    const observer = new MutationObserver(createDownloadButton);
+    observer.observe(document.body, { childList: true, subtree: true });
+});
