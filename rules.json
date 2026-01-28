@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        {
+          "header": "set-cookie",
+          "operation": "set",
+          "value": "sd_docs=; Max-Age=0; Path=/"
+        }
+      ]
+    },
+    "condition": {
+      "urlFilter": "||studocu."
+    }
+  }
+]
