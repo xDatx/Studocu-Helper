@@ -13,7 +13,12 @@
       ]
     },
     "condition": {
-      "urlFilter": "||studocu."
+      "requestDomains": [
+        "studocu.com",
+        "studocu.id",
+        "studocu.vn",
+        "studeersnel.nl"
+      ]
     }
   }
 ]

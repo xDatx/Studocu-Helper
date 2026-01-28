@@ -3,19 +3,14 @@
   "name": "Studocu Cleaner",
   "version": "1.0", 
   "permissions": [
-    "cookies",
-    "scripting",  
-    "activeTab",
     "declarativeNetRequest"
   ],
   "host_permissions": [
-    "*://*.studocu.com/*",
-    "*://*.studocu.vn/*"
+    "*://*.studeersnel.nl/nl/document/*/*",
+    "*://*.studocu.com/en/document/*/*",
+    "*://*.studocu.id/id/document/*/*",
+    "*://*.studocu.vn/vn/document/*/*"
   ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_title": "Studocu Tools"
-  },
   "declarative_net_request": {
     "rule_resources": [
       {
@@ -27,11 +22,6 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.studocu.com/*", "*://*.studocu.vn/*"],
-      "css": ["custom_style.css"],
-      "run_at": "document_start"
-    },
-    {
       "js": ["download.js"],
       "matches": [
         "*://*.studeersnel.nl/nl/document/*/*",
@@ -40,12 +30,6 @@
         "*://*.studocu.vn/vn/document/*/*"
       ],
       "run_at": "document_end"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": ["viewer_styles.css"],
-      "matches": ["*://*.studocu.com/*", "*://*.studocu.vn/*"]
     }
   ]
 }
