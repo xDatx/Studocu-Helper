@@ -6,6 +6,15 @@ async function fetchDocument() {
     const pageContainer = document.createElement('div');
     pageContainer.id = 'page-container';
 
+    const downloadButtons = document.querySelectorAll('.pdf-download-btn');
+    const updateProgress = (progress) => downloadButtons
+        .forEach(downloadButton => downloadButton.textContent = progress);
+
+    const pageCount = pageDataList.length;
+    let pageLoaded = 0;
+
+    updateProgress(`Loading pages: 0/${pageCount}`);
+
     await Promise.all(pageDataList.map(async pageData => {
         let pageHtml = pageData.pageHtml;
 
@@ -20,6 +29,7 @@ async function fetchDocument() {
         }
 
         pageContainer.innerHTML += `${pageData.pageHtmlWrapper}${pageHtml}</div>`;
+        updateProgress(`Loading pages: ${++pageLoaded}/${pageCount}`);
     }));
 
     const styleElement = document.createElement('style');
@@ -56,9 +66,12 @@ body > *:not(.p2hv) {
     viewerElement.append(pageContainer);
 
     document.body.append(viewerElement);
-    window.print();
-    styleElement.remove();
-    viewerElement.remove();
+
+    setTimeout(() => {
+        window.print();
+        styleElement.remove();
+        viewerElement.remove();
+    }, 1000);
 }
 
 function createDownloadButton() {
