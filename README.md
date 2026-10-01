@@ -1,58 +1,75 @@
-#  Studocu Helper
+# Studocu Helper
 
-Một tiện ích mở rộng nhẹ dành cho trình duyệt, giúp tối ưu hóa trải nghiệm đọc và lưu trữ tài liệu trên Studocu.
+Extension Chrome giúp xuất tài liệu Studocu ra PDF, dùng chính chức năng in gốc của trình duyệt.
 
-> **Trạng thái:** v1.0
+> **v2.0.0**: viết lại hoàn toàn. Cách cũ (unblur + export) đã được thay bằng cách in native, gọn và ổn định hơn. Bản cũ vẫn còn ở tag `v1-old`.
 
-## 📖 Giới thiệu
+## Tính năng
 
-Công cụ này được phát triển để giải quyết các vấn đề hiển thị gây cản trở khi xem tài liệu học tập. Thay vì phải thao tác thủ công phức tạp, extension cung cấp giải pháp "một click" để làm sạch giao diện và xuất tài liệu ra định dạng in ấn chuẩn.
+- **In PDF**: tự cuộn qua toàn bộ tài liệu để tải hết các trang, sau đó chỉ giữ lại phần nội dung tài liệu và mở hộp thoại in của trình duyệt.
+- **Chỉnh tốc độ cuộn**: 4 mức (Chậm / Vừa / Nhanh / Rất nhanh). Mạng yếu thì chọn chậm để không sót trang.
+- **Khôi phục trang**: trả lại giao diện Studocu như ban đầu sau khi in.
+- **Xóa cookie & tải lại**: xóa cookie của Studocu rồi reload tab, dùng khi trang bị giới hạn hoặc lỗi hiển thị.
 
-## ✨ Tính năng chính
+## Cài đặt
 
-### 1. Bypass Blur & Remove Watermark 
-Đây là tính năng cốt lõi giúp hiển thị nội dung nguyên bản của tài liệu:
-- **Xóa lớp phủ mờ (Unblur):** Loại bỏ các layer che khuất nội dung, giúp văn bản hiển thị rõ nét 100%.
-- **Xóa Watermark:** Tự động ẩn các logo chìm, text quảng cáo hoặc các popup gây rối mắt đè lên nội dung.
-- **Tối ưu hiển thị:** Giữ lại định dạng gốc (font chữ, bố cục) để người dùng có trải nghiệm đọc tốt nhất.
+1. Vào mục [Releases](../../releases) tải file `.zip` mới nhất, hoặc bấm **Code → Download ZIP**.
+2. Giải nén ra một thư mục.
+3. Mở `chrome://extensions` trên Chrome / Edge / Brave...
+4. Bật **Developer mode** (góc trên bên phải).
+5. Bấm **Load unpacked** và chọn thư mục vừa giải nén (thư mục chứa `manifest.json`).
 
-### 2. PDF Export 
-Tính năng hỗ trợ lưu tài liệu về máy để in ấn hoặc đọc offline:
-- **Render tự động:** Tự động cuộn và tải toàn bộ các trang tài liệu trước khi xuất.
-- **Chuẩn khổ giấy A4:** Tự động căn chỉnh lề và kích thước trang phù hợp với máy in thông dụng.
-- **Fix lỗi hiển thị:** Đã xử lý triệt để lỗi xuất hiện "vạch đen" (black line artifact) ở cuối trang thường gặp khi lưu trang web thành PDF.
+Yêu cầu: Chrome 119 trở lên.
 
----
+## Cách dùng
 
-## 🛠 Hướng dẫn cài đặt
+1. Mở tài liệu cần lưu trên `studocu.com` hoặc `studocu.vn`.
+2. Bấm biểu tượng extension để mở popup.
+3. Chọn tốc độ cuộn.
+4. Bấm **In PDF** và chờ extension cuộn hết tài liệu.
+5. Khi hộp thoại in hiện ra, chọn **Save as PDF** (Lưu dưới dạng PDF), để **Margins: None** rồi lưu.
+6. Bấm **Khôi phục trang** nếu muốn quay lại giao diện bình thường.
 
-Do đây là công cụ phát triển cá nhân (chưa đưa lên Store), bạn cần cài đặt thủ công qua chế độ Developer:
+Nếu trang bị lỗi hoặc không tải được nội dung, thử bấm **Xóa cookie & tải lại** rồi làm lại từ bước 2.
 
-1. **Tải mã nguồn:** Tải file `.zip` của dự án về và giải nén (hoặc clone repository này).
-2. **Mở trình quản lý tiện ích:** Truy cập đường dẫn `chrome://extensions/` trên trình duyệt (Chrome, Edge, Cốc Cốc...).
-3. **Bật Developer Mode:** Gạt công tắc **"Developer mode"** ở góc trên bên phải màn hình.
-4. **Tải tiện ích:** Nhấn nút **"Load unpacked"** và chọn thư mục chứa mã nguồn vừa giải nén.
-dụng
-## Cách sử dụng
+## Cách hoạt động
 
-1. Truy cập vào tài liệu Studocu cần xem.
-2. Nếu bị chặn watermark và mờ thì bắt buộc mở extension và chọn Bypass mờ và watermark để công đoạn tiếp theo thành công
-3. Cuộn chuột xuống cuối trang để đảm bảo toàn bộ nội dung đã được tải.
-4. Mở Extension và nhấn nút **"Tạo File PDF"**.
-5. Chờ vài giây để tool xử lý, sau đó hộp thoại lưu PDF sẽ tự động hiện ra.
+- Cuộn từng đoạn để Studocu tải đủ các trang tài liệu (`.page-content`).
+- Đo kích thước từng trang, ẩn mọi phần tử không liên quan (quảng cáo, thanh menu...) và gỡ các giới hạn CSS để mỗi trang in đúng một tờ.
+- Gọi chức năng in gốc của trình duyệt nên chữ trong PDF vẫn chọn/copy được, không bị biến thành ảnh.
 
----
+## Quyền extension sử dụng
 
-Video Testing:
+| Quyền | Dùng để |
+|---|---|
+| `activeTab`, `scripting` | Chèn CSS/JS xử lý trang vào tab Studocu đang mở |
+| `cookies` | Xóa cookie của Studocu |
+| `storage`, `webNavigation` | Lưu cài đặt và theo dõi điều hướng trang |
+| `*.studocu.com`, `*.studocu.vn` | Chỉ hoạt động trên hai tên miền này |
 
-https://github.com/user-attachments/assets/0f98de3a-cdbb-464d-8209-b9953b0721ee
+Extension không thu thập hay gửi dữ liệu đi đâu cả, mọi thứ chạy ngay trên máy bạn.
 
-## ⚠️ Lưu ý (Disclaimer)
-Công cụ này được tạo ra với mục đích hỗ trợ học tập và nghiên cứu cá nhân. Vui lòng sử dụng có trách nhiệm và tôn trọng bản quyền của tài liệu gốc.
+## Cấu trúc dự án
 
----
-## Stars ⭐
+```
+├── manifest.json     # Cấu hình extension (Manifest V3)
+├── background.js     # Service worker, xử lý xóa cookie
+├── popup.html/css/js # Giao diện popup
+├── native-print.js   # Logic cuộn, đo trang, chuẩn bị in
+└── native-print.css  # Style áp dụng khi in
+```
 
+## Lưu ý
 
+- Dự án chỉ phục vụ mục đích học tập và dùng cá nhân. Hãy tôn trọng bản quyền của tác giả tài liệu và điều khoản của Studocu.
+- Studocu có thể đổi giao diện bất cứ lúc nào làm extension ngừng hoạt động. Nếu gặp lỗi, mở [Issue](../../issues) kèm link tài liệu (nếu được) và mô tả lỗi.
 
-<img width="2748" height="1986" alt="star-history-20251211 (1)" src="https://github.com/user-attachments/assets/f0fd47b7-d196-477d-a0d6-4311fdcac177" />
+## Changelog
+
+### 2.0.0
+- Viết lại toàn bộ: chuyển sang in native thay cho cách cũ.
+- Thêm chỉnh tốc độ cuộn, nút khôi phục trang, nút xóa cookie.
+- Chuyển hoàn toàn sang Manifest V3.
+
+### 1.x
+- Bản cũ, xem tag `v1-old`.
