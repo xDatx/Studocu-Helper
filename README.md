@@ -71,5 +71,9 @@ Extension không thu thập hay gửi dữ liệu đi đâu cả, mọi thứ ch
 - Thêm chỉnh tốc độ cuộn, nút khôi phục trang, nút xóa cookie.
 - Chuyển hoàn toàn sang Manifest V3.
 
+## Stars ⭐
+<img width="2748" height="2106" alt="star-history-2026101" src="https://github.com/user-attachments/assets/8426b98e-950a-46cf-b48f-81dcc0ef69e0" />
+
+
 ### 1.x
 - Bản cũ, xem tag `v1-old`.
