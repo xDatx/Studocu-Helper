@@ -1,31 +1,25 @@
 {
   "manifest_version": 3,
-  "name": "Studocu Cleaner",
-  "version": "1.0", 
+  "name": "Studocu Helper",
+  "version": "2.0.0",
+  "description": "Maybe the best version I've made so far.",
+  "minimum_chrome_version": "119",
   "permissions": [
+    "activeTab",
+    "scripting",
     "cookies",
-    "scripting",  
-    "activeTab"
+    "storage",
+    "webNavigation"
   ],
   "host_permissions": [
     "*://*.studocu.com/*",
     "*://*.studocu.vn/*"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Studocu Tools"
-  },
-  "content_scripts": [
-    {
-      "matches": ["*://*.studocu.com/*", "*://*.studocu.vn/*"],
-      "css": ["custom_style.css"],
-      "run_at": "document_start"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": ["viewer_styles.css"],
-      "matches": ["*://*.studocu.com/*", "*://*.studocu.vn/*"]
-    }
-  ]
+    "default_title": "Studocu Helper"
+  }
 }
