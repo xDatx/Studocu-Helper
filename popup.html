@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Studocu Native Print</title>
+
+  <link
+    rel="stylesheet"
+    href="popup.css"
+  >
+</head>
+
+<body>
+
+  <main class="app">
+
+    <header>
+      <div>
+        <h1>Easy to use</h1>
+        <p>Studocu → PDF</p>
+      </div>
+
+      <span class="version">
+        2.0.0
+      </span>
+    </header>
+
+
+    <section class="speed-card">
+
+      <div class="speed-header">
+        <span>
+          Tốc độ cuộn
+        </span>
+
+        <strong id="speedLabel">
+          Vừa
+        </strong>
+      </div>
+
+
+      <input
+        id="speedRange"
+        type="range"
+        min="1"
+        max="4"
+        step="1"
+        value="2"
+        aria-label="Tốc độ cuộn"
+      >
+
+
+      <div class="speed-scale">
+        <span>Chậm</span>
+        <span>Rất nhanh</span>
+      </div>
+
+    </section>
+
+    <button
+      id="clearBtn"
+      class="cookie-button"
+    >
+      Xóa cookie & tải lại
+    </button>
+    
+    <button
+      id="printBtn"
+      class="primary"
+    >
+      In PDF
+    </button>
+
+
+    <button
+      id="restoreBtn"
+      class="secondary"
+      hidden
+    >
+      Khôi phục trang
+    </button>
+
+
+    <div
+      id="status"
+      class="status"
+      role="status"
+      aria-live="polite"
+    >
+      Sẵn sàng
+    </div>
+
+  </main>
+
+
+  <script src="popup.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,266 @@
+:root {
+  color-scheme: dark;
+
+  font-family:
+    Inter,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  background: #0b1020;
+  color: #f8fafc;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+
+body {
+  width: 320px;
+  margin: 0;
+  background: #0b1020;
+}
+
+
+.app {
+  padding: 18px;
+}
+
+
+/* ==============================
+   HEADER
+============================== */
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 18px;
+}
+
+
+h1 {
+  margin: 0;
+
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+
+header p {
+  margin: 4px 0 0;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+}
+
+
+.version {
+  padding: 4px 8px;
+
+  border: 1px solid #273449;
+  border-radius: 999px;
+
+  color: #94a3b8;
+
+  font-size: 10px;
+}
+
+
+/* ==============================
+   SPEED
+============================== */
+
+.speed-card {
+  padding: 14px;
+
+  margin-bottom: 14px;
+
+  border: 1px solid #273449;
+  border-radius: 12px;
+
+  background: #111827;
+}
+
+
+.speed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 12px;
+
+  font-size: 12px;
+}
+
+
+.speed-header span {
+  color: #cbd5e1;
+}
+
+
+.speed-header strong {
+  color: #818cf8;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* ==============================
+   RANGE
+============================== */
+
+input[type="range"] {
+  width: 100%;
+  height: 4px;
+
+  margin: 4px 0 8px;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  border-radius: 999px;
+
+  background: #334155;
+
+  cursor: pointer;
+}
+
+
+input[type="range"]::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  border: 3px solid #111827;
+  border-radius: 50%;
+
+  background: #818cf8;
+
+  box-shadow:
+    0 0 0 1px #818cf8;
+
+  cursor: pointer;
+}
+
+
+input[type="range"]:disabled {
+  opacity: 0.45;
+  cursor: wait;
+}
+
+
+.speed-scale {
+  display: flex;
+  justify-content: space-between;
+
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+
+/* ==============================
+   BUTTON
+============================== */
+
+button {
+  width: 100%;
+
+  padding: 12px;
+
+  border: 0;
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    opacity 0.15s,
+    transform 0.1s;
+}
+
+
+button:active {
+  transform: scale(0.985);
+}
+
+
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+
+.primary {
+  background: #6366f1;
+  color: white;
+}
+
+
+.primary:hover:not(:disabled) {
+  background: #7073f4;
+}
+
+
+.secondary {
+  margin-top: 8px;
+
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+
+/* ==============================
+   STATUS
+============================== */
+
+.status {
+  min-height: 36px;
+
+  margin-top: 12px;
+  padding: 10px 11px;
+
+  border-radius: 9px;
+
+  background: #111827;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+
+.status.error {
+  color: #fca5a5;
+
+  background: #2a1115;
+}
+
+
+[hidden] {
+  display: none !important;
+}
+
+.cookie-button {
+  margin-bottom: 9px;
+
+  background: #1e293b;
+  color: #cbd5e1;
+}
+
+.cookie-button:hover:not(:disabled) {
+  background: #293548;
+}

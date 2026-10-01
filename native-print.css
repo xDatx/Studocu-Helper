@@ -1,0 +1,67 @@
+/* Bật cả trên màn hình lẫn khi in: cái gì thấy trước khi in là cái được in */
+html:has(body.studocu-native-print) {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+body.studocu-native-print {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #fff !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* Phần tử không liên quan: bỏ hẳn khỏi layout (visibility:hidden vẫn chiếm chỗ) */
+body.studocu-native-print .sn-hide {
+  display: none !important;
+}
+
+/* Tổ tiên của .page-content: gỡ mọi giới hạn kích thước/cắt/dịch chuyển */
+body.studocu-native-print .sn-anc {
+  display: block !important;
+  position: static !important;
+  float: none !important;
+  inset: auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: visible !important;
+  transform: none !important;
+  zoom: 1 !important;
+  contain: none !important;
+  box-shadow: none !important;
+  background: none !important;
+}
+
+/* Chính các trang. width/height được JS đặt theo kích thước đo được */
+body.studocu-native-print .page-content.studocu-valid-page {
+  display: block !important;
+  visibility: visible !important;
+  content-visibility: visible !important;
+  position: relative !important;
+  inset: auto !important;
+  float: none !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+  break-after: page !important;
+  page-break-after: always !important;
+  break-inside: avoid !important;
+}
+
+body.studocu-native-print .page-content.studocu-native-print-last {
+  break-after: auto !important;
+  page-break-after: auto !important;
+}
+
+@media print {
+  @page { margin: 0; }
+}

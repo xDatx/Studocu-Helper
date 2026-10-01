@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Studocu Helper",
+  "version": "2.0.0",
+  "description": "Maybe the best version I've made so far.",
+  "minimum_chrome_version": "119",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "cookies",
+    "storage",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "*://*.studocu.com/*",
+    "*://*.studocu.vn/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Studocu Helper"
+  }
+}
