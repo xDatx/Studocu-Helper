@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Studocu Helper",
-  "version": "2.0.0",
-  "description": "Maybe the best version I've made so far.",
+  "name": "Studocu + Scribd Helper",
+  "version": "2.1.0",
+  "description": "Chuẩn bị và in tài liệu trên Studocu và Scribd.",
   "minimum_chrome_version": "119",
   "permissions": [
     "activeTab",
@@ -13,13 +13,26 @@
   ],
   "host_permissions": [
     "*://*.studocu.com/*",
-    "*://*.studocu.vn/*"
+    "*://*.studocu.vn/*",
+    "https://scribd.com/*",
+    "https://*.scribd.com/*"
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Studocu Helper"
-  }
+    "default_title": "Studocu + Scribd Helper"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://scribd.com/*",
+        "https://*.scribd.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
 }

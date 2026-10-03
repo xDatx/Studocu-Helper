@@ -3,99 +3,75 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>Studocu Native Print</title>
-
-  <link
-    rel="stylesheet"
-    href="popup.css"
-  >
+  <title>Studocu + Scribd Helper</title>
+  <link rel="stylesheet" href="popup.css">
 </head>
-
 <body>
+  <!-- Nốt nhạc rơi (trang trí) -->
+  <div class="notes" aria-hidden="true">
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
 
   <main class="app">
-
     <header>
-      <div>
-        <h1>Easy to use</h1>
-        <p>Studocu → PDF</p>
+      <div class="title-wrap">
+        <h1>Miku The Helper <small>ヘルパー</small></h1>
+        <p id="siteLabel">Đang nhận diện trang…</p>
       </div>
-
-      <span class="version">
-        2.0.0
-      </span>
+      <span class="version">v2.1.0</span>
     </header>
 
-
-    <section class="speed-card">
-
+    <section class="speed-card" id="speedCard">
       <div class="speed-header">
-        <span>
-          Tốc độ cuộn
-        </span>
-
-        <strong id="speedLabel">
-          Vừa
-        </strong>
+        <span>Tốc độ cuộn</span>
+        <strong id="speedLabel">Vừa</strong>
       </div>
-
-
-      <input
-        id="speedRange"
-        type="range"
-        min="1"
-        max="4"
-        step="1"
-        value="2"
-        aria-label="Tốc độ cuộn"
-      >
-
-
-      <div class="speed-scale">
-        <span>Chậm</span>
-        <span>Rất nhanh</span>
-      </div>
-
+      <input id="speedRange" type="range" min="1" max="4" step="1" value="2" aria-label="Tốc độ cuộn">
+      <div class="speed-scale"><span>♩ Chậm</span><span>Rất nhanh ♬</span></div>
     </section>
 
-    <button
-      id="clearBtn"
-      class="cookie-button"
-    >
-      Xóa cookie & tải lại
-    </button>
-    
-    <button
-      id="printBtn"
-      class="primary"
-    >
-      In PDF
-    </button>
+    <button id="clearBtn" class="cookie-button" disabled title="Chỉ hoạt động trên Studocu"> Xóa cookie Studocu &amp; tải lại</button>
+    <button id="printBtn" class="primary" disabled>♪ In PDF ♪</button>
+    <button id="restoreBtn" class="secondary" hidden>↺ Khôi phục trang</button>
 
-
-    <button
-      id="restoreBtn"
-      class="secondary"
-      hidden
-    >
-      Khôi phục trang
-    </button>
-
-
-    <div
-      id="status"
-      class="status"
-      role="status"
-      aria-live="polite"
-    >
-      Sẵn sàng
+    <div class="talk">
+      <svg class="mascot" viewBox="0 0 64 64" aria-hidden="true">
+        <!-- hai bím tóc -->
+        <path d="M14 26 Q-2 34 3 62 Q14 58 19 42 Z" fill="#39c5bb"/>
+        <path d="M50 26 Q66 34 61 62 Q50 58 45 42 Z" fill="#39c5bb"/>
+        <path d="M9 52 Q8 58 5 60" stroke="#7fe9e0" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <path d="M55 52 Q56 58 59 60" stroke="#7fe9e0" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <!-- dây buộc tóc -->
+        <circle cx="12" cy="29" r="3.2" fill="#e12885"/>
+        <circle cx="52" cy="29" r="3.2" fill="#e12885"/>
+        <!-- tóc + mặt -->
+        <circle cx="32" cy="33" r="22" fill="#39c5bb"/>
+        <ellipse cx="32" cy="40" rx="18.5" ry="16.5" fill="#fff1e6"/>
+        <path d="M13 35 Q16 11 32 11 Q48 11 51 35 Q44 23 38 28 Q33 20 29 28 Q21 21 13 35Z" fill="#39c5bb"/>
+        <path d="M22 16 Q27 13 31 17" stroke="#7fe9e0" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <!-- headphone -->
+        <path d="M9.5 31 Q9 7 32 7 Q55 7 54.5 31" stroke="#1f2a30" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+        <rect x="5" y="26" width="7" height="13" rx="3.2" fill="#2b3a42" stroke="#39c5bb" stroke-width="1.2"/>
+        <rect x="52" y="26" width="7" height="13" rx="3.2" fill="#2b3a42" stroke="#39c5bb" stroke-width="1.2"/>
+        <!-- mắt -->
+        <g class="eyes">
+          <ellipse cx="23.5" cy="42" rx="4.2" ry="5.6" fill="#0f3d3a"/>
+          <ellipse cx="40.5" cy="42" rx="4.2" ry="5.6" fill="#0f3d3a"/>
+          <ellipse cx="23.5" cy="44.6" rx="3" ry="2" fill="#39c5bb"/>
+          <ellipse cx="40.5" cy="44.6" rx="3" ry="2" fill="#39c5bb"/>
+          <circle cx="25.1" cy="39.8" r="1.7" fill="#fff"/>
+          <circle cx="42.1" cy="39.8" r="1.7" fill="#fff"/>
+        </g>
+        <!-- má hồng + miệng -->
+        <ellipse cx="16" cy="49" rx="3.4" ry="2" fill="#fb7185" opacity=".5"/>
+        <ellipse cx="48" cy="49" rx="3.4" ry="2" fill="#fb7185" opacity=".5"/>
+        <path d="M29 50 Q30.5 52.2 32 50 Q33.5 52.2 35 50" stroke="#9f1239" fill="none" stroke-width="1.4" stroke-linecap="round"/>
+        <!-- giọt mồ hôi: chỉ hiện khi có lỗi -->
+        <path class="sweat" d="M56 22 Q60.5 29 56 32 Q51.5 29 56 22Z" fill="#7fe9e0" stroke="#fff" stroke-width=".8"/>
+      </svg>
+      <div id="status" class="status" role="status" aria-live="polite">Đang kiểm tra trang…</div>
     </div>
-
   </main>
-
-
   <script src="popup.js"></script>
-
 </body>
 </html>

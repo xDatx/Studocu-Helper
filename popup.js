@@ -1,437 +1,221 @@
-const printButton =
-  document.getElementById(
-    'printBtn'
-  );
+const printButton = document.getElementById('printBtn');
+const restoreButton = document.getElementById('restoreBtn');
+const statusBox = document.getElementById('status');
+const speedRange = document.getElementById('speedRange');
+const speedLabel = document.getElementById('speedLabel');
+const speedCard = document.getElementById('speedCard');
+const clearButton = document.getElementById('clearBtn');
+const siteLabel = document.getElementById('siteLabel');
 
-const restoreButton =
-  document.getElementById(
-    'restoreBtn'
-  );
+const NS = 'studocu-native-print';
 
-const statusBox =
-  document.getElementById(
-    'status'
-  );
-
-const speedRange =
-  document.getElementById(
-    'speedRange'
-  );
-
-const speedLabel =
-  document.getElementById(
-    'speedLabel'
-  );
-
-const clearButton =
-  document.getElementById(
-    'clearBtn'
-  );
-  
-let tabId;
-
-
-/*
- * 4 mức tốc độ.
- *
- * Mức 2 chính là tốc độ hiện tại:
- * 0.25 viewport / 50ms.
- */
 const SPEEDS = {
-  1: {
-    label: 'Chậm',
-    scrollStep: 0.125
-  },
-
-  2: {
-    label: 'Vừa',
-    scrollStep: 0.25
-  },
-
-  3: {
-    label: 'Nhanh',
-    scrollStep: 0.5
-  },
-
-  4: {
-    label: 'Rất nhanh',
-    scrollStep: 1
-  }
+  1: { label: 'Chậm', scrollStep: 0.125, scribdFactor: 2.5 },
+  2: { label: 'Vừa', scrollStep: 0.25, scribdFactor: 1 },
+  3: { label: 'Nhanh', scrollStep: 0.5, scribdFactor: 0.65 },
+  4: { label: 'Rất nhanh', scrollStep: 1, scribdFactor: 0.35 }
 };
 
+let currentTab;
+let site;
+let scribdFrameId;
+let pollTimer;
 
-clearButton.addEventListener(
-  'click',
+function setStatus(message, error = false) {
+  statusBox.textContent = message;
+  statusBox.classList.toggle('error', error);
+}
 
-  async () => {
+function showStudocu(state) {
+  setStatus(state.message || 'Sẵn sàng', state.phase === 'error');
+  const busy = state.phase === 'printing' || state.phase === 'preparing';
+  printButton.disabled = busy;
+  speedRange.disabled = busy;
+  restoreButton.hidden = state.phase !== 'printing';
+  if (state.phase === 'printing' && state.textPageCount !== undefined) {
+    statusBox.textContent += ` • Có chữ: ${state.textPageCount} trang`;
+    if (state.imageOnlyCount) statusBox.textContent += ` • Chỉ ảnh: ${state.imageOnlyCount} trang`;
+  }
+}
+
+/* ==============================
+   STUDOCU
+============================== */
+
+async function injectStudocu() {
+  await chrome.scripting.insertCSS({ target: { tabId: currentTab.id }, files: ['native-print.css'] });
+  await chrome.scripting.executeScript({ target: { tabId: currentTab.id }, files: ['native-print.js'] });
+}
+
+// Gửi lệnh; nếu content script không còn (trang vừa reload) thì inject lại rồi gửi lại.
+async function sendStudocu(command, options) {
+  const msg = { namespace: NS, command, ...(options ? { options } : {}) };
+  try {
+    return await chrome.tabs.sendMessage(currentTab.id, msg);
+  } catch {
+    await injectStudocu();
+    return await chrome.tabs.sendMessage(currentTab.id, msg);
+  }
+}
+
+async function connectStudocu() {
+  clearInterval(pollTimer);
+  showStudocu(await sendStudocu('status'));
+  pollTimer = setInterval(async () => {
+    try {
+      showStudocu(await chrome.tabs.sendMessage(currentTab.id, { namespace: NS, command: 'status' }));
+    } catch { clearInterval(pollTimer); }
+  }, 500);
+}
+
+// Reload tab và chờ tải xong (có timeout phòng trường hợp không nhận được sự kiện).
+function reloadAndWait(tabId, timeoutMs = 20000) {
+  return new Promise(resolve => {
+    let sawLoading = false;
+    const done = () => {
+      chrome.tabs.onUpdated.removeListener(listener);
+      clearTimeout(timer);
+      resolve();
+    };
+    const listener = (id, info) => {
+      if (id !== tabId) return;
+      if (info.status === 'loading') sawLoading = true;
+      if (info.status === 'complete' && sawLoading) done();
+    };
+    const timer = setTimeout(done, timeoutMs);
+    chrome.tabs.onUpdated.addListener(listener);
+    chrome.tabs.reload(tabId);
+  });
+}
+
+/* ==============================
+   SCRIBD
+============================== */
+
+async function getScribdFrames() {
+  const frames = await chrome.webNavigation.getAllFrames({ tabId: currentTab.id });
+  const found = [];
+  for (const frame of frames || []) {
+    try {
+      const response = await chrome.tabs.sendMessage(currentTab.id, { type: 'SNP_PING' }, { frameId: frame.frameId });
+      if (response?.pageCount) found.push({ frameId: frame.frameId, pageCount: response.pageCount });
+    } catch { /* Không phải frame chứa viewer Scribd. */ }
+  }
+  return found.sort((a, b) => b.pageCount - a.pageCount);
+}
+
+async function connectScribd() {
+  const [viewer] = await getScribdFrames();
+  if (!viewer) throw new Error('Chưa tìm thấy trang tài liệu Scribd. Hãy mở tài liệu rồi thử lại.');
+  scribdFrameId = viewer.frameId;
+  setStatus(`Tìm thấy ${viewer.pageCount} trang trong viewer.`);
+  printButton.disabled = false;
+  restoreButton.hidden = true;
+}
+
+/* ==============================
+   KHỞI TẠO
+============================== */
+
+async function initialize() {
+  [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const url = currentTab?.url || '';
+  if (/^https?:\/\/(?:[^/]+\.)?studocu\.(?:com|vn)(?:\/|$)/i.test(url)) {
+    site = 'studocu';
+    siteLabel.textContent = 'Studocu → PDF';
+    clearButton.disabled = false;
+    clearButton.title = 'Xóa cookie Studocu và tải lại trang';
+    const saved = localStorage.getItem('studocu-print-speed');
+    if (saved && SPEEDS[saved]) speedRange.value = saved;
+    speedLabel.textContent = SPEEDS[speedRange.value].label;
+    await connectStudocu();
+  } else if (/^https:\/\/(?:www\.)?scribd\.com\//i.test(url)) {
+    site = 'scribd';
+    siteLabel.textContent = 'Scribd → PDF';
     clearButton.disabled = true;
+    clearButton.title = 'Nút này chỉ dùng trên Studocu';
+    const saved = localStorage.getItem('studocu-print-speed');
+    if (saved && SPEEDS[saved]) speedRange.value = saved;
+    speedLabel.textContent = SPEEDS[speedRange.value].label;
+    await connectScribd();
+  } else {
+    clearButton.disabled = true;
+    throw new Error('Mở tài liệu trên Studocu hoặc Scribd trước khi dùng.');
+  }
+}
 
-    statusBox.classList.remove('error');
+speedRange.addEventListener('input', () => {
+  speedLabel.textContent = SPEEDS[speedRange.value].label;
+  localStorage.setItem('studocu-print-speed', speedRange.value);
+});
 
-    statusBox.textContent =
-      'Đang quét và xóa cookie...';
+printButton.addEventListener('click', async () => {
+  printButton.disabled = true;
+  speedRange.disabled = true;
+  try {
+    if (site === 'studocu') {
+      const selected = SPEEDS[speedRange.value] || SPEEDS[2];
+      showStudocu(await sendStudocu('start', { scrollStep: selected.scrollStep }));
+    } else if (site === 'scribd') {
+      setStatus('Đang nạp các trang và chuẩn bị bố cục…');
+      const selected = SPEEDS[speedRange.value] || SPEEDS[2];
+      const prepared = await chrome.tabs.sendMessage(currentTab.id, {
+        type: 'SNP_START', options: { speedFactor: selected.scribdFactor }
+      }, { frameId: scribdFrameId });
+      if (!prepared?.ok) throw new Error(prepared?.error || 'Không chuẩn bị được các trang Scribd.');
+      restoreButton.hidden = false;
+      setStatus(`Đã chuẩn bị ${prepared.pageCount} trang. Đang mở Print…`);
+      await chrome.tabs.sendMessage(currentTab.id, { type: 'SNP_PRINT' }, { frameId: scribdFrameId });
+      printButton.disabled = false;
+    }
+  } catch (error) {
+    setStatus(error.message || 'Không thể chuẩn bị trang.', true);
+    printButton.disabled = false;
+    speedRange.disabled = false;
+  } finally {
+    if (site === 'scribd') speedRange.disabled = false;
+  }
+});
 
-    try {
-      const allCookies =
-        await chrome.cookies.getAll({});
-
-      let count = 0;
-
-      for (const cookie of allCookies) {
-        if (
-          cookie.domain.includes('studocu')
-        ) {
-          const cleanDomain =
-            cookie.domain.startsWith('.')
-              ? cookie.domain.substring(1)
-              : cookie.domain;
-
-          const protocol =
-            cookie.secure
-              ? 'https:'
-              : 'http:';
-
-          const url =
-            `${protocol}//${cleanDomain}${cookie.path}`;
-
-          await chrome.cookies.remove({
-            url: url,
-            name: cookie.name,
-            storeId: cookie.storeId
-          });
-
-          count++;
-        }
+restoreButton.addEventListener('click', async () => {
+  restoreButton.disabled = true;
+  try {
+    if (site === 'studocu') {
+      showStudocu(await sendStudocu('restore'));
+    } else if (site === 'scribd') {
+      const frames = await chrome.webNavigation.getAllFrames({ tabId: currentTab.id });
+      for (const frame of frames || []) {
+        try { await chrome.tabs.sendMessage(currentTab.id, { type: 'SNP_RESTORE' }, { frameId: frame.frameId }); } catch { /* Ignore unrelated frames. */ }
       }
-
-      statusBox.textContent =
-        `Đã xóa ${count} cookies! Đang tải lại...`;
-
-      setTimeout(
-        () => {
-          chrome.tabs.query(
-            {
-              active: true,
-              currentWindow: true
-            },
-
-            tabs => {
-              if (tabs[0]) {
-                chrome.tabs.reload(
-                  tabs[0].id
-                );
-              }
-            }
-          );
-        },
-
-        1000
-      );
+      setStatus('Đã khôi phục trang Scribd.');
     }
+  } catch (error) {
+    setStatus(error.message || 'Không thể khôi phục trang.', true);
+  } finally { restoreButton.disabled = false; }
+});
 
-    catch (e) {
-      console.error(e);
-
-      statusBox.classList.add('error');
-
-      statusBox.textContent =
-        'Lỗi: ' + e.message;
-
-      clearButton.disabled = false;
-    }
+clearButton.addEventListener('click', async () => {
+  clearButton.disabled = true;
+  printButton.disabled = true;
+  setStatus('Đang quét và xóa cookie…');
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'CLEAR_COOKIES_OLD_LOGIC' });
+    if (!result?.ok) throw new Error(result?.error || 'Không xóa được cookie.');
+    clearInterval(pollTimer);
+    setStatus(`Đã xóa ${result.count} cookie. Đang tải lại…`);
+    await reloadAndWait(currentTab.id);
+    await connectStudocu();           // inject lại script + bật lại poll
+    clearButton.disabled = false;
+  } catch (error) {
+    setStatus(`Lỗi: ${error.message}`, true);
+    clearButton.disabled = false;
+    printButton.disabled = false;
   }
-);
-/*
- * Khôi phục tốc độ người dùng
- * đã chọn lần trước.
- */
-const savedSpeed =
-  localStorage.getItem(
-    'studocu-print-speed'
-  );
-
-
-if (
-  savedSpeed &&
-  SPEEDS[savedSpeed]
-) {
-  speedRange.value =
-    savedSpeed;
-}
-
-
-function updateSpeedUI() {
-  const selected =
-    SPEEDS[
-      speedRange.value
-    ] || SPEEDS[2];
-
-  speedLabel.textContent =
-    selected.label;
-}
-
-
-updateSpeedUI();
-
-
-speedRange.addEventListener(
-  'input',
-  () => {
-    updateSpeedUI();
-
-    localStorage.setItem(
-      'studocu-print-speed',
-      speedRange.value
-    );
-  }
-);
-
-
-/*
- * Hiển thị trạng thái.
- */
-function show(state) {
-  statusBox.textContent =
-    state.message;
-
-  statusBox.classList.toggle(
-    'error',
-    state.phase === 'error'
-  );
-
-
-  const busy =
-    state.phase === 'printing' ||
-    state.phase === 'preparing';
-
-
-  printButton.disabled =
-    busy;
-
-  speedRange.disabled =
-    busy;
-
-
-  restoreButton.hidden =
-    state.phase !== 'printing';
-
-
-  if (
-    state.phase === 'printing' &&
-    state.textPageCount !== undefined
-  ) {
-    statusBox.textContent +=
-      ` • Có chữ: ${state.textPageCount} trang`;
-
-    if (
-      state.imageOnlyCount
-    ) {
-      statusBox.textContent +=
-        ` • Chỉ ảnh: ${state.imageOnlyCount} trang`;
-    }
-  }
-}
-
-
-/*
- * Kết nối tab Studocu.
- */
-async function connect() {
-  const [tab] =
-    await chrome.tabs.query({
-      active: true,
-      currentWindow: true
-    });
-
-
-  if (
-    !tab?.id ||
-    !/^https?:\/\/(?:[^/]+\.)?studocu\.(?:com|vn)(?:\/|$)/i.test(
-      tab.url || ''
-    )
-  ) {
-    throw new Error(
-      'Hãy mở tài liệu Studocu trước.'
-    );
-  }
-
-
-  tabId =
-    tab.id;
-
-
-  await chrome.scripting.insertCSS({
-    target: {
-      tabId
-    },
-
-    files: [
-      'native-print.css'
-    ]
-  });
-
-
-  await chrome.scripting.executeScript({
-    target: {
-      tabId
-    },
-
-    files: [
-      'native-print.js'
-    ]
-  });
-
-
-  show(
-    await chrome.tabs.sendMessage(
-      tabId,
-      {
-        namespace:
-          'studocu-native-print',
-
-        command:
-          'status'
-      }
-    )
-  );
-}
-
-
-/*
- * Khôi phục.
- */
-restoreButton.addEventListener(
-  'click',
-
-  async () => {
-    try {
-      show(
-        await chrome.tabs.sendMessage(
-          tabId,
-          {
-            namespace:
-              'studocu-native-print',
-
-            command:
-              'restore'
-          }
-        )
-      );
-    }
-
-    catch (error) {
-      show({
-        phase: 'error',
-        message: error.message
-      });
-    }
-  }
-);
-
-
-/*
- * PRINT
- */
-printButton.addEventListener(
-  'click',
-
-  async () => {
-    const selected =
-      SPEEDS[
-        speedRange.value
-      ] || SPEEDS[2];
-
-
-    printButton.disabled =
-      true;
-
-    speedRange.disabled =
-      true;
-
-
-    try {
-      show(
-        await chrome.tabs.sendMessage(
-          tabId,
-          {
-            namespace:
-              'studocu-native-print',
-
-            command:
-              'start',
-
-            options: {
-              scrollStep:
-                selected.scrollStep
-            }
-          }
-        )
-      );
-    }
-
-    catch (error) {
-      show({
-        phase: 'error',
-        message: error.message
-      });
-    }
-  }
-);
-
-
-/*
- * CONNECT
- */
-connect()
-  .then(() => {
-    const timer =
-      setInterval(
-        async () => {
-          try {
-            show(
-              await chrome.tabs.sendMessage(
-                tabId,
-                {
-                  namespace:
-                    'studocu-native-print',
-
-                  command:
-                    'status'
-                }
-              )
-            );
-          }
-
-          catch {
-            clearInterval(
-              timer
-            );
-          }
-        },
-
-        500
-      );
-
-
-    window.addEventListener(
-      'pagehide',
-
-      () =>
-        clearInterval(
-          timer
-        )
-    );
-  })
-
-  .catch(error => {
-    printButton.disabled =
-      true;
-
-    speedRange.disabled =
-      true;
-
-    show({
-      phase: 'error',
-      message: error.message
-    });
-  });
+});
+
+window.addEventListener('pagehide', () => clearInterval(pollTimer));
+initialize().catch(error => {
+  printButton.disabled = true;
+  speedRange.disabled = true;
+  setStatus(error.message || 'Không thể kết nối với trang.', true);
+});
